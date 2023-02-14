@@ -1,0 +1,16 @@
+@endpoint = https://6r93kixotj.execute-api.us-east-1.amazonaws.com/prod/
+
+GET {{endpoint}}/hello
+###
+
+GET {{endpoint}}/spaces?spaceId=3dfcd446-f2db-414c-a37e-92788202ae4d
+###
+
+POST {{endpoint}}/spaces/
+Content-Type: application/json
+
+{
+    "location": "London",
+    "name": "Best location"
+}
+###
