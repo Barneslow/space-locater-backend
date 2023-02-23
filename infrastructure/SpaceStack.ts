@@ -1,18 +1,22 @@
 import { Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import {
-  Code,
-  Function as LambdaFunction,
-  Runtime,
-} from "aws-cdk-lib/aws-lambda";
+
 import { join } from "path";
-import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import {
+  AuthorizationType,
+  LambdaIntegration,
+  MethodOptions,
+  RestApi,
+} from "aws-cdk-lib/aws-apigateway";
 import { GenericTable } from "./GenericTable";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { AuthorizerWrapper } from "./auth/authorizerWrapper";
 
 export class SpaceStack extends Stack {
   private api = new RestApi(this, "SpaceApi");
+  private authorizer: AuthorizerWrapper;
+
   private spacesTable = new GenericTable(this, {
     tableName: "SpacesTable",
     primaryKey: "spaceId",
@@ -26,6 +30,8 @@ export class SpaceStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
 
+    this.authorizer = new AuthorizerWrapper(this, this.api);
+
     const helloLambdaNodeJs = new NodejsFunction(this, "helloLambdaNodeJs", {
       entry: join(__dirname, "..", "services", "node-lambda", "hello.ts"),
       handler: "handler",
@@ -36,11 +42,17 @@ export class SpaceStack extends Stack {
     s3ListPolicy.addResources("*");
     helloLambdaNodeJs.addToRolePolicy(s3ListPolicy);
 
-    const helloLintergration = new LambdaIntegration(helloLambdaNodeJs);
+    const optionsWithAuthorizer: MethodOptions = {
+      authorizationType: AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: this.authorizer.authorizer.authorizerId,
+      },
+    };
 
+    const helloLintergration = new LambdaIntegration(helloLambdaNodeJs);
     const helloLresource = this.api.root.addResource("hello");
 
-    helloLresource.addMethod("GET", helloLintergration);
+    helloLresource.addMethod("GET", helloLintergration, optionsWithAuthorizer);
 
     const spaceResource = this.api.root.addResource("spaces");
     spaceResource.addMethod("POST", this.spacesTable.createLambdaIntegration);
