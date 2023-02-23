@@ -63,6 +63,7 @@ export class GenericTable {
       }
     }
   }
+
   private createLambdas() {
     if (this.props.createLambdaPath) {
       this.createLambda = this.createSingleLambda(this.props.createLambdaPath);

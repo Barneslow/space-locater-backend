@@ -1,16 +1,32 @@
 @endpoint = https://6r93kixotj.execute-api.us-east-1.amazonaws.com/prod/
 
-GET {{endpoint}}/hello
+GET {{endpoint}}/spaces
 ###
 
-GET {{endpoint}}/spaces?spaceId=3dfcd446-f2db-414c-a37e-92788202ae4d
+GET {{endpoint}}/spaces?spaceId=62441029-e571-449c-a9e0-d068509a540a
 ###
+
+GET {{endpoint}}/spaces?location=France
+###
+
 
 POST {{endpoint}}/spaces/
 Content-Type: application/json
 
 {
-    "location": "London",
-    "name": "Best location"
+    "location": "France",
+    "name": "New Location"
 }
+###
+
+
+PUT {{endpoint}}/spaces?spaceId=62441029-e571-449c-a9e0-d068509a540a
+Content-Type: application/json
+{
+    "location": "Updated Location"
+}
+###
+
+
+DELETE {{endpoint}}/spaces?spaceId=438eec4d-c09a-45eb-b795-c92e4d9d3ff6
 ###

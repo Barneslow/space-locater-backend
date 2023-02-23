@@ -4,9 +4,13 @@ import {
   APIGatewayProxyResult,
   Context,
 } from "aws-lambda";
-import { v4 } from "uuid";
 
 import * as dotenv from "dotenv";
+import {
+  MissingFieldError,
+  ValidateSpaceEntry,
+} from "../../Shared/InputValidator";
+import { generateRandomId, getEventBody } from "../../Shared/Utils";
 
 dotenv.config({ path: "./.env" });
 
@@ -22,11 +26,12 @@ async function handler(
     body: "Hello from DYnamoDb",
   };
 
-  const item =
-    typeof event.body == "object" ? event.body : JSON.parse(event.body);
-  item.spaceId = v4();
-
   try {
+    const item = getEventBody(event);
+    item.spaceId = generateRandomId();
+
+    ValidateSpaceEntry(item);
+
     await dbClient
       .put({
         TableName: TABLE_NAME!,
@@ -35,6 +40,11 @@ async function handler(
       .promise();
     result.body = JSON.stringify(`Created item with id: ${item.spaceId}`);
   } catch (error: any) {
+    if (error instanceof MissingFieldError) {
+      result.statusCode = 403;
+    } else {
+      result.statusCode = 500;
+    }
     result.body = error.message;
   }
 

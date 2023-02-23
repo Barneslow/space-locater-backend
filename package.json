@@ -18,15 +18,16 @@
   },
   "homepage": "https://github.com/Barneslow/space-locater-backend#readme",
   "dependencies": {
+    "@aws-amplify/auth": "^5.1.9",
     "@types/aws-lambda": "^8.10.110",
     "@types/node": "^18.13.0",
+    "aws-amplify": "^5.0.15",
     "aws-cdk-lib": "^2.64.0",
     "aws-sdk": "^2.1314.0",
     "constructs": "^10.1.249",
     "dotenv": "^16.0.3",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5",
-    "uuid": "^9.0.0"
+    "typescript": "^4.9.5"
   },
   "devDependencies": {
     "esbuild": "^0.17.8"
