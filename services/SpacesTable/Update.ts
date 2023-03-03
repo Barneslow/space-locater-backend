@@ -6,7 +6,7 @@ import {
 } from "aws-lambda";
 
 import * as dotenv from "dotenv";
-import { getEventBody } from "../../Shared/Utils";
+import { addCorsHeader, getEventBody } from "../../Shared/Utils";
 
 dotenv.config({ path: "./.env" });
 
@@ -22,6 +22,7 @@ async function handler(
     statusCode: 200,
     body: "Hello from DYnamoDb",
   };
+  addCorsHeader(result);
 
   try {
     const requestBody = getEventBody(event);

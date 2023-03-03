@@ -10,7 +10,11 @@ import {
   MissingFieldError,
   ValidateSpaceEntry,
 } from "../../Shared/InputValidator";
-import { generateRandomId, getEventBody } from "../../Shared/Utils";
+import {
+  addCorsHeader,
+  generateRandomId,
+  getEventBody,
+} from "../../Shared/Utils";
 
 dotenv.config({ path: "./.env" });
 
@@ -25,6 +29,7 @@ async function handler(
     statusCode: 200,
     body: "Hello from DYnamoDb",
   };
+  addCorsHeader(result);
 
   try {
     const item = getEventBody(event);
@@ -38,7 +43,9 @@ async function handler(
         Item: item,
       })
       .promise();
-    result.body = JSON.stringify(`Created item with id: ${item.spaceId}`);
+    result.body = JSON.stringify({
+      id: item.spaceId,
+    });
   } catch (error: any) {
     if (error instanceof MissingFieldError) {
       result.statusCode = 403;

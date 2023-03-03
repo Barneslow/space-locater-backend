@@ -4,7 +4,6 @@ import { config } from "./config";
 import { CognitoUser } from "@aws-amplify/auth";
 import * as AWS from "aws-sdk";
 import { Credentials } from "aws-sdk";
-import { rejects } from "assert";
 
 Amplify.configure({
   Auth: {
